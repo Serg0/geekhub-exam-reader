@@ -2,6 +2,7 @@ package com.geekhub.nadolinskyi.serhii.simlpereader;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 
 public class FirstActivity extends FragmentActivity {
@@ -10,6 +11,12 @@ public class FirstActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_first);
+		
+		
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.rootLayout, new ListViewFragment());
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 
 	@Override
