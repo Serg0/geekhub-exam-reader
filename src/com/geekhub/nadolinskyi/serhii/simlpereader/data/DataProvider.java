@@ -133,7 +133,7 @@ public class DataProvider {
 		}
 		
 		
-		return null;
+		return articlesArray;
 	}
 	
 	

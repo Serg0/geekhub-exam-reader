@@ -1,9 +1,12 @@
 package com.geekhub.nadolinskyi.serhii.simlpereader;
 
 
+import org.holoeverywhere.widget.Toast;
+
 import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 import com.geekhub.nadolinskyi.serhii.simlpereader.data.DataProvider;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.ArticlesArray;
+import com.geekhub.nadolinskyi.serhii.simlpereader.utils.ArticlesArrayAdapter;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -13,9 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class ListViewFragment extends Fragment {
 	public static final String LOG_TAG = "ListViewFragment";
+	private ListView listView;
+	private ArticlesArrayAdapter adapter;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +35,7 @@ public class ListViewFragment extends Fragment {
 /*	 for future FT container id
  * 		((ViewGroup)getView().getParent()).getId();
  */
+		listView = (ListView) getView().findViewById(R.id.listView);
 		new GetArticlesTask().execute(Constants.FEED_URL);
 		
 		
@@ -69,10 +76,19 @@ public class ListViewFragment extends Fragment {
 	}
 
 	
+	
 }
 	 private void processGetContentResult(ArticlesArray result) {
 			// TODO Auto-generated method stub
 			// TODO Add if null handling, or create ServerDataResponse entity 
+		if ( result.getArticlesArray() != null){ 
+		 adapter = new ArticlesArrayAdapter(getActivity(), result.getArticlesArray());
+		 
+		 listView.setAdapter(adapter);
+		 }else{
+		Toast.makeText(getActivity(), "Invalid server responce", Toast.LENGTH_LONG).show();	 
+		 }
+		 
 		}
 			 
 }

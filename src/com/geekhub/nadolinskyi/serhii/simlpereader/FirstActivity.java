@@ -17,6 +17,7 @@ public class FirstActivity extends FragmentActivity {
 		ft.replace(R.id.rootLayout, new ListViewFragment());
 		ft.addToBackStack(null);
 		ft.commit();
+		
 	}
 
 	@Override
