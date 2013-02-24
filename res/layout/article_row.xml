@@ -30,6 +30,7 @@
         android:layout_toLeftOf="@+id/imageView1"
         android:layout_toRightOf="@+id/icon"
         android:ellipsize="end"
+        android:maxLines="1"
         android:paddingLeft="4dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />

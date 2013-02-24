@@ -1,35 +1,74 @@
 package com.geekhub.nadolinskyi.serhii.simlpereader.models;
 
+import java.util.ArrayList;
+
 public class Article {
+	//TODO do this class Parcelable
+	String 
+		title,
+		link,
+		comments,
+		pubDate,
+		creator,
+		description,
+		content,
+		comments_rss,
+		splash_comments;
+		
+	ArrayList<String> categories;
 	
-	String title, subtitle, id, date, content, link, picture;
-
-	public String getPicture() {
-		return picture;
-	}
-
-	public String getSubtitle() {
-		return subtitle;
+	public Article(){
+		title = "";
+		link = "";
+		comments = "";
+		pubDate = "";
+		creator = "";
+		description = "";
+		content = "";
+		comments_rss = "";
+		splash_comments = "";
+		categories = new ArrayList<String>();
+		
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public String getId() {
-		return id;
+	public String getLink() {
+		return link;
 	}
 
-	public String getDate() {
-		return date;
+	public String getComments() {
+		return comments;
+	}
+
+	public String getPubDate() {
+		return pubDate;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public String getContent() {
 		return content;
 	}
 
-	public String getLink() {
-		return link;
+	public String getComments_rss() {
+		return comments_rss;
+	}
+
+	public String getSplash_comments() {
+		return splash_comments;
+	}
+
+	public ArrayList<String> getCategories() {
+		return categories;
 	}
 
 	public Article setTitle(String title) {
@@ -37,13 +76,28 @@ public class Article {
 		return this;
 	}
 
-	public Article setId(String id) {
-		this.id = id;
+	public Article setLink(String link) {
+		this.link = link;
 		return this;
 	}
 
-	public Article setDate(String date) {
-		this.date = date;
+	public Article setComments(String comments) {
+		this.comments = comments;
+		return this;
+	}
+
+	public Article setPubDate(String pubDate) {
+		this.pubDate = pubDate;
+		return this;
+	}
+
+	public Article setCreator(String creator) {
+		this.creator = creator;
+		return this;
+	}
+
+	public Article setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 
@@ -52,19 +106,24 @@ public class Article {
 		return this;
 	}
 
-	public Article setLink(String link) {
-		this.link = link;
+	public Article setComments_rss(String comments_rss) {
+		this.comments_rss = comments_rss;
+		return this;
+	}
+
+	public Article setSplash_comments(String splash_comments) {
+		this.splash_comments = splash_comments;
+		return this;
+	}
+
+	public Article setCategories(ArrayList<String> categories) {
+		this.categories = categories;
 		return this;
 	}
 	
-	public Article setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
+	public Article addCategory(String category){
+		this.categories.add(category);
 		return this;
 	}
-
-	public Article setPicture(String picture) {
-		this.picture = picture;
-		return this;
-	}
-
+	
 }

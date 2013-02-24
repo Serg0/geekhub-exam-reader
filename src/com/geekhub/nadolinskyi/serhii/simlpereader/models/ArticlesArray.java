@@ -19,7 +19,11 @@ public class ArticlesArray {
 		this.articlesArray = articlesArray;
 	}
 	
-	public void add (Article article) {
+	public void add(Article article) {
 		this.articlesArray.add(article);
+	}
+	
+	public void addAll(ArrayList <Article> articlesArray) {
+		this.articlesArray.addAll(articlesArray);
 	}
 }

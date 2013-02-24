@@ -53,7 +53,7 @@ public class ArticlesArrayAdapter extends ArrayAdapter<Article> {
 		ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
 		
 		title.setText(article.getTitle());
-		subTitle.setText(article.getSubtitle());
+//		subTitle.setText(article.getSubtitle());
 		
 		return convertView /*super.getView(position, convertView, parent)*/;
 	}

@@ -24,6 +24,26 @@ public class Constants {
 	public static final String JSON_RESULT = "file:///android_asset/dummyText.html";
 	
 	
+	public static final String XML_CHANNEL 						= "channel";
+	public static final String XML_ITEM 						= "item";
+	public static final String XML_TITLE 						= "title";
+	public static final String XML_LINK 						= "link";
+	public static final String XML_COMMENTS 					= "comments";
+	public static final String XML_PUB_DATE 					= "pubDate";
+	public static final String XML_CREATOR	 					= "dc:creator";
+	public static final String XML_CATEGORY 					= "category";
+	public static final String XML_DESCTRIPTION					= "description";
+	public static final String XML_CONTENT						= "content:encoded";
+	public static final String XML_COMMENTS_RSS					= "wfw:commentRss";
+	public static final String XML_COMMENTS_SPLASH				= "slash:comments";
+	
+	public static final String URL_FEED 						= "http://newswatch.nationalgeographic.com/feed";
+	public static final String URL_FEED_NEXT_PAGE				="/?paged=";
+	
+	public static final String BK_CONTENT						="com.geekhub.nadolinskyi.serhii.simlpereader.bk.content";
+	
+	
+	
 	
 	
 }
