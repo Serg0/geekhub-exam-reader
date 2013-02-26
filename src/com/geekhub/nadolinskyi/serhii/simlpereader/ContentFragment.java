@@ -32,6 +32,7 @@ public class ContentFragment extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+//		setRetainInstance(true);
 /*	 for future FT container id
  * 		((ViewGroup)getView().getParent()).getId();
  */

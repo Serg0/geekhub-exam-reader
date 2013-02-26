@@ -8,19 +8,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
-import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +24,7 @@ import android.util.Log;
 import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.Article;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.ArticlesArray;
+
 
 
 public class DataProvider {
@@ -54,11 +47,6 @@ public class DataProvider {
 	private static ArticlesArray articlesArray = new ArticlesArray();
 	
 	
-	
-	
-	
-	
-	
 	public static ArticlesArray getContent(){
 		//TODO get data from db/net
 		
@@ -67,11 +55,11 @@ public class DataProvider {
 	}
 
 	private static ArticlesArray getContentFromURL() {
-		
+		Log.d(LOG_TAG, "Started to download ");
 		URL url;
 		String feedString;
 		try {
-			url = new URL(Constants.URL_FEED);
+			url = new URL(/*Constants.URL_FEED*/buildUrlFeedQuery());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			feedString = convertStreamToString(con.getInputStream());
 		} catch (MalformedURLException e) {
@@ -159,7 +147,7 @@ public class DataProvider {
 			Log.d(LOG_TAG, "feedString is null");
 			return null;
 		}
-//		Log.d(LOG_TAG, "feedString is " + feedString);
+		Log.d(LOG_TAG, "Started to parse ");
 		ArticlesArray articlesArray = new ArticlesArray();
 		
 		 InputStream stream = new ByteArrayInputStream(feedString
@@ -199,7 +187,7 @@ public class DataProvider {
 			    	  		 .setContent(getNodeValue(element, Constants.XML_CONTENT))
 			    	  		 .setComments_rss(getNodeValue(element, Constants.XML_COMMENTS_RSS))
 			    	  		 .setSplash_comments(getNodeValue(element, Constants.XML_COMMENTS_SPLASH));
-			    	  
+			    	  Log.d(LOG_TAG, "TITLE: " + article.getTitle());
 			    	  NodeList categoriesNodesList = element.getElementsByTagName(Constants.XML_CATEGORY);
 			    	  for (int categories_index = 0; categories_index < categoriesNodesList
 			                  .getLength(); categories_index++) {
@@ -207,8 +195,9 @@ public class DataProvider {
 			    		  article.addCategory(categoryNode.getTextContent());
 			    	  }
 			    	  articlesArray.add(article);
-			    	  Log.d(LOG_TAG, "Got " + article.getCategories().size() +" elements of " + Constants.XML_CATEGORY);
+//			    	  Log.d(LOG_TAG, "Got " + article.getCategories().size() +" elements of " + Constants.XML_CATEGORY);
 			    	  }
+			     Log.d(LOG_TAG, "Parce finished ");
 			     return articlesArray;
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
@@ -264,7 +253,7 @@ public class DataProvider {
 		String nodeValue = "";
 //		if (e.hasChildNodes()){
 			NodeList nodeList = e.getElementsByTagName(nodeName);
-			Log.d(LOG_TAG, "Got " + nodeList.getLength() +" elements of " + nodeName);
+//			Log.d(LOG_TAG, "Got " + nodeList.getLength() +" elements of " + nodeName);
 			if (nodeList.getLength() != 0){
 				nodeValue = nodeList.item(0).getTextContent();
 //				nodeValue = nodeList.item(0).getNodeValue();
@@ -273,14 +262,21 @@ public class DataProvider {
 					}
 				
 				if (nodeList.getLength()>1){
-					Log.d(LOG_TAG, "Got " + nodeList.getLength() +" elements of " + e.getNodeName());
+//					Log.d(LOG_TAG, "Got " + nodeList.getLength() +" elements of " + e.getNodeName());
 				}
 				
 			}
 			
 			
 //		}
-		Log.d(LOG_TAG, "Got '" + nodeValue +"' value of " + nodeList.item(0).getNodeName());
+//		Log.d(LOG_TAG, "Got '" + nodeValue +"' value of " + nodeList.item(0).getNodeName());
 		return nodeValue;
 	}
+	
+private static String buildUrlFeedQuery(){
+	Log.d(LOG_TAG, "Previous page is "+ nextPage);
+	String query = Constants.URL_FEED + Constants.URL_FEED_NEXT_PAGE + String.valueOf(nextPage++);
+	Log.d(LOG_TAG, "Next page is "+ nextPage);
+	return query;
+}
 }

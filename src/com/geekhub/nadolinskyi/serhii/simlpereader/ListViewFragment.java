@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -29,8 +30,8 @@ public class ListViewFragment extends Fragment {
 	public static final String LOG_TAG = "ListViewFragment";
 	private ListView listView;
 	private ArticlesArrayAdapter adapter;
-	private ArrayList<Article> articlesArray;
-	
+	private ArrayList<Article> articlesArray = new ArrayList<Article>();
+	private boolean isLoading = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,15 +42,43 @@ public class ListViewFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+//		setRetainInstance(true);
 /*	TODO
  *  for future FT container id
  * 		((ViewGroup)getView().getParent()).getId();
  */
 		listView = (ListView) getView().findViewById(R.id.listView);
-		new GetArticlesTask().execute(Constants.FEED_URL);
+		listView.setOnScrollListener(scrollListener);
 		
+		if(savedInstanceState != null){
+		
+		}else{
+			new GetArticlesTask().execute(Constants.FEED_URL);
+		}
 		
 	}
+	
+private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollListener() {
+		
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			// TODO Auto-generated method stub
+			boolean loadMore = /* maybe add a padding */
+					firstVisibleItem + visibleItemCount >= totalItemCount;
+
+		        if((loadMore)&&(!isLoading)) {
+		            new GetArticlesTask().execute(Constants.FEED_URL);
+		            
+		        }
+		}
+	};
 	
 	 protected class GetArticlesTask extends
 	  AsyncTask<String, Void, ArticlesArray> {
@@ -59,6 +88,7 @@ public class ListViewFragment extends Fragment {
 	@Override
 	protected void onPreExecute() {
 	  super.onPreExecute();
+	  isLoading = true;
 	  progress = ProgressDialog.show(getActivity(),
 	      null, getString(R.string.progress_dialog), true,
 	      false);
@@ -82,6 +112,7 @@ public class ListViewFragment extends Fragment {
 	  super.onPostExecute(result);
 	  processGetContentResult(result);
 	  progress.dismiss();
+	  isLoading = false;
 
 	}
 
@@ -92,11 +123,16 @@ public class ListViewFragment extends Fragment {
 			// TODO Auto-generated method stub
 			// TODO Add if null handling, or create ServerDataResponse entity 
 		if ((result != null) && ( result.getArticlesArray() != null)){ 
-		 articlesArray = result.getArticlesArray();
-		 adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
+		 articlesArray.addAll(result.getArticlesArray());
+		if(adapter != null){
+			adapter.notifyDataSetChanged();
+		}else{
+			adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
+			 
+			 listView.setAdapter(adapter);
+			 listView.setOnItemClickListener(listViewItemOnClickListener);
+		} 
 		 
-		 listView.setAdapter(adapter);
-		 listView.setOnItemClickListener(listViewItemOnClickListener);
 		 }else{
 		Toast.makeText(getActivity(), "Invalid server responce", Toast.LENGTH_LONG).show();	 
 		 }
