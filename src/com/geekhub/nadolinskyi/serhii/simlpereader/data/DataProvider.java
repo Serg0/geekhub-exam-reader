@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +25,7 @@ import android.util.Log;
 import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.Article;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.ArticlesArray;
+import com.geekhub.nadolinskyi.serhii.simlpereader.models.DataResponceEntity;
 
 
 
@@ -40,44 +42,93 @@ public class DataProvider {
 	public static final String JSON_PARSE_CONTENT 			= "content";
 	public static final String JSON_PARSE_DATE 				= "date";
 	public static final String JSON_PARSE_LINK 				= "link";
-
-
-	private static boolean hasNextPage = true;
-	private static int     nextPage = 1;
-	private static ArticlesArray articlesArray = new ArticlesArray();
 	
 	
-	public static ArticlesArray getContent(){
-		//TODO get data from db/net
+	public static final int SERVER_RESPONCE_OK 							= 200;
+	public static final int SERVER_RESPONCE_FAILED						= -1;
+	public static final int SERVER_RESPONCE_NO_FEED						= -2;
+	
+	
+	public static final int SERVER_RESPONCE_EXCEPTION_MALFORMED_URL		= 501;
+	public static final int SERVER_RESPONCE_EXCEPTION_IO				= 503;
+	public static final int SERVER_RESPONCE_EXCEPTION_UNKNOWN			= 504;
+	
+	public static final int DATA_RESPONCE_OK 							= 0;
+	public static final int DATA_RESPONCE_FAILURE 						= 600;
+	public static final int DATA_RESPONCE_FEED_END 						= 601;
+	public static final int DATA_RESPONCE_PARCE_ERROR					= 602;
+	
+
+//	private static ArticlesArray articlesArray = new ArticlesArray();
+	private static ArrayList<Article> articlesArray = new  ArrayList<Article>();
+	private static DataResponceEntity responce = new DataResponceEntity();
+	
+	public static DataResponceEntity getContent(boolean getContentFromDB, boolean fetchNewArticles){
+		
+		if(getContentFromDB){
+			//TODO get data from db/net
+			return null;
+		}else{
+			if((articlesArray.size() == 0)||(fetchNewArticles)) {
+				return getContentFromURL();
+			}else{
+				if (articlesArray.size()>0){
+					
+					return responce.setResponceCode(DATA_RESPONCE_OK)
+								.setArticlesArray(articlesArray);
+				}else{
+					return responce.setResponceCode(DATA_RESPONCE_FAILURE);
+				}
+					
+			}
+		}
 		
 		
-		return getContentFromURL();
 	}
 
-	private static ArticlesArray getContentFromURL() {
+	private static DataResponceEntity getContentFromURL() {
 		Log.d(LOG_TAG, "Started to download ");
 		URL url;
 		String feedString;
 		try {
-			url = new URL(/*Constants.URL_FEED*/buildUrlFeedQuery());
+			url = new URL(buildUrlFeedQuery());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			feedString = convertStreamToString(con.getInputStream());
+			if(con.getResponseCode() == SERVER_RESPONCE_OK){
+				feedString = convertStreamToString(con.getInputStream());
+			}else{
+				
+				return responce.setResponceCode(SERVER_RESPONCE_FAILED)
+						.setResponceMessage(con.getResponseMessage())
+						.setArticlesArray(articlesArray)
+						.decCurrentPage();
+			}
+			
+			
 		} catch (MalformedURLException e) {
 			Log.d(LOG_TAG, e.getMessage());
 			e.printStackTrace();
-			return null;
+			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_MALFORMED_URL)
+					.setResponceMessage(e.getMessage())
+					.setArticlesArray(articlesArray)
+					.decCurrentPage();
 		} catch (IOException e) {
 			Log.d(LOG_TAG, e.getMessage());
 			e.printStackTrace();
-			return null;
+			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_IO)
+					.setResponceMessage(e.getMessage())
+					.setArticlesArray(articlesArray)
+					.decCurrentPage();
 		} catch (Exception e) {
 			Log.d(LOG_TAG, e.getMessage());
 			e.printStackTrace();
-			return null;
+			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_UNKNOWN)
+					.setResponceMessage(e.getMessage())
+					.setArticlesArray(articlesArray)
+					.decCurrentPage();
 		}
 		
 //		return parseJSONtoArticles(feedString);
-		return parseXMLtoArticles(feedString);
+		return  parseXMLtoArticles(feedString);
 		
 		
 	/*Random randomId = new Random();
@@ -142,13 +193,15 @@ public class DataProvider {
 		return articlesArray;
 	}
 	*/
-	public static ArticlesArray parseXMLtoArticles(String feedString){
+	public static DataResponceEntity parseXMLtoArticles(String feedString){
 		if ((feedString == null)||(feedString.equals(""))){
 			Log.d(LOG_TAG, "feedString is null");
-			return null;
+			return responce.setResponceCode(SERVER_RESPONCE_NO_FEED)
+					.setArticlesArray(articlesArray)
+					.decCurrentPage();
 		}
 		Log.d(LOG_TAG, "Started to parse ");
-		ArticlesArray articlesArray = new ArticlesArray();
+//		ArrayList<Article> articlesArray = new ArrayList<Article>();
 		
 		 InputStream stream = new ByteArrayInputStream(feedString
 		        .getBytes());
@@ -166,7 +219,9 @@ public class DataProvider {
 			     Element channelElement = (Element) channelNode;
 			     NodeList item_nodeList = channelElement.getElementsByTagName(Constants.XML_ITEM);
 			     if (item_nodeList.getLength() == 0){
-			    	 hasNextPage  = false;
+			    	 responce.setHasNoNextPage();
+			    	 responce.setResponceCode(DATA_RESPONCE_FEED_END)
+						.setArticlesArray(articlesArray);
 			     }
 			     
 			     //Getting all "item elements"
@@ -198,25 +253,27 @@ public class DataProvider {
 //			    	  Log.d(LOG_TAG, "Got " + article.getCategories().size() +" elements of " + Constants.XML_CATEGORY);
 			    	  }
 			     Log.d(LOG_TAG, "Parce finished ");
-			     return articlesArray;
+			     return responce.setResponceCode(DATA_RESPONCE_OK)
+							.setArticlesArray(articlesArray);
+							
 			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return responce.setResponceCode(DATA_RESPONCE_PARCE_ERROR)
+						.setResponceMessage(e.getMessage())
+						.setArticlesArray(articlesArray);
 			} catch (SAXException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return responce.setResponceCode(DATA_RESPONCE_PARCE_ERROR)
+						.setResponceMessage(e.getMessage())
+						.setArticlesArray(articlesArray);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return responce.setResponceCode(DATA_RESPONCE_PARCE_ERROR)
+						.setResponceMessage(e.getMessage())
+						.setArticlesArray(articlesArray);
+				
 			}
 			
-		    	  
-		      
-			   return null;  
-	      
-	      
-	      
-		
 	}
 	
 	
@@ -274,9 +331,18 @@ public class DataProvider {
 	}
 	
 private static String buildUrlFeedQuery(){
-	Log.d(LOG_TAG, "Previous page is "+ nextPage);
-	String query = Constants.URL_FEED + Constants.URL_FEED_NEXT_PAGE + String.valueOf(nextPage++);
-	Log.d(LOG_TAG, "Next page is "+ nextPage);
+	String query = Constants.URL_FEED + Constants.URL_FEED_NEXT_PAGE 
+			+ String.valueOf(responce.incCurrentPage());
 	return query;
+}
+
+public static boolean hasLoadedArticles(){
+	
+	if (articlesArray.size()>0){
+		return true;
+	}else{
+		return false;
+	}
+	
 }
 }

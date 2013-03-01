@@ -9,6 +9,7 @@ import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 import com.geekhub.nadolinskyi.serhii.simlpereader.data.DataProvider;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.Article;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.ArticlesArray;
+import com.geekhub.nadolinskyi.serhii.simlpereader.models.DataResponceEntity;
 import com.geekhub.nadolinskyi.serhii.simlpereader.utils.ArticlesArrayAdapter;
 
 import android.app.ProgressDialog;
@@ -30,7 +31,7 @@ public class ListViewFragment extends Fragment {
 	public static final String LOG_TAG = "ListViewFragment";
 	private ListView listView;
 	private ArticlesArrayAdapter adapter;
-	private ArrayList<Article> articlesArray = new ArrayList<Article>();
+	private ArrayList<Article> articlesArray;
 	private boolean isLoading = false;
 
 	@Override
@@ -49,13 +50,16 @@ public class ListViewFragment extends Fragment {
  */
 		listView = (ListView) getView().findViewById(R.id.listView);
 		listView.setOnScrollListener(scrollListener);
-		
-		if(savedInstanceState != null){
-		
+		if (DataProvider.hasLoadedArticles())
+		{
+			articlesArray = DataProvider.getContent(false, false).getArticlesArray();
 		}else{
-			new GetArticlesTask().execute(Constants.FEED_URL);
+			articlesArray = new ArrayList<Article>();
 		}
 		
+		adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
+		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(listViewItemOnClickListener);
 	}
 	
 private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollListener() {
@@ -74,14 +78,14 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 					firstVisibleItem + visibleItemCount >= totalItemCount;
 
 		        if((loadMore)&&(!isLoading)) {
-		            new GetArticlesTask().execute(Constants.FEED_URL);
+		            new GetArticlesTask().execute();
 		            
 		        }
 		}
 	};
 	
 	 protected class GetArticlesTask extends
-	  AsyncTask<String, Void, ArticlesArray> {
+	  AsyncTask<Void, Void, DataResponceEntity> {
 
 	ProgressDialog progress;
 
@@ -95,10 +99,10 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	}
 
 	@Override
-	protected ArticlesArray doInBackground(String... feedsURL) {
+	protected DataResponceEntity doInBackground(Void... params) {
 		//TODO remove or include in logic feedsURL transition
 	  try {
-	    return DataProvider.getContent();
+	    return DataProvider.getContent(false, true);
 	        
 	  } catch (Exception e) {
 	    e.printStackTrace();
@@ -108,7 +112,7 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	}
 
 	@Override
-	protected void onPostExecute(ArticlesArray result) {
+	protected void onPostExecute(DataResponceEntity result) {
 	  super.onPostExecute(result);
 	  processGetContentResult(result);
 	  progress.dismiss();
@@ -119,19 +123,34 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	
 	
 }
-	 private void processGetContentResult(ArticlesArray result) {
-			// TODO Auto-generated method stub
+	 private void processGetContentResult(DataResponceEntity result) {
 			// TODO Add if null handling, or create ServerDataResponse entity 
-		if ((result != null) && ( result.getArticlesArray() != null)){ 
-		 articlesArray.addAll(result.getArticlesArray());
-		if(adapter != null){
-			adapter.notifyDataSetChanged();
-		}else{
-			adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
-			 
-			 listView.setAdapter(adapter);
-			 listView.setOnItemClickListener(listViewItemOnClickListener);
-		} 
+		if ((result != null) && ( result != null)){ 
+//		 articlesArray.addAll(result.getArticlesArray());
+			switch (result.getResponceCode()) {
+			case DataProvider.DATA_RESPONCE_OK:
+				articlesArray = result.getArticlesArray();
+				if(adapter != null){
+					/*adapter.notifyDataSetChanged();
+					listView.invalidate();
+					listView.setAdapter(adapter);
+					listView.refreshDrawableState();*/
+					adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
+					listView.setAdapter(adapter);
+					listView.setOnItemClickListener(listViewItemOnClickListener);
+					
+						Log.d(LOG_TAG, "adapter.notifyDataSetChanged();");
+						Log.d(LOG_TAG, "articlesArray.size()" + articlesArray.size());
+				} 
+				
+				break;
+
+			default:
+				
+				Toast.makeText(getActivity(), "Somthing went wrong", Toast.LENGTH_LONG).show();	 
+				break;
+			}
+			
 		 
 		 }else{
 		Toast.makeText(getActivity(), "Invalid server responce", Toast.LENGTH_LONG).show();	 

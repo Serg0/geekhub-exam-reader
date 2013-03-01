@@ -9,6 +9,7 @@ public class FirstActivity extends FragmentActivity {
 
 	private static final String LIST_VIEW_FRAGMENT_TAG = "com.geekhub.nadolinskyi.serhii.simlpereader.ListViewFragment";
 	ListViewFragment fragment;
+	private FragmentTransaction ft;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +23,16 @@ public class FirstActivity extends FragmentActivity {
 	        fragment = new ListViewFragment();
 	        getSupportFragmentManager().beginTransaction().add(R.id.rootLayout, fragment, LIST_VIEW_FRAGMENT_TAG).commit(); 
 	    }*/
-	    
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.rootLayout, new ListViewFragment());
-		ft.addToBackStack(LIST_VIEW_FRAGMENT_TAG);
+		fragment = new ListViewFragment();
+		ft = getSupportFragmentManager().beginTransaction();
+		ft.add(R.id.rootLayout, fragment);
+//		ft.addToBackStack(LIST_VIEW_FRAGMENT_TAG);
 		ft.commit();
 		
 	}
-/*	@Override
+	
+	
+	/*@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
