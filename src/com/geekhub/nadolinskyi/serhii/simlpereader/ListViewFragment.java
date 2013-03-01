@@ -31,7 +31,7 @@ public class ListViewFragment extends Fragment {
 	public static final String LOG_TAG = "ListViewFragment";
 	private ListView listView;
 	private ArticlesArrayAdapter adapter;
-	private ArrayList<Article> articlesArray;
+	private static ArrayList<Article> articlesArray;
 	private boolean isLoading = false;
 
 	@Override
@@ -87,15 +87,18 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	 protected class GetArticlesTask extends
 	  AsyncTask<Void, Void, DataResponceEntity> {
 
-	ProgressDialog progress;
+//	ProgressDialog progress;
+	View view = getActivity().getLayoutInflater().inflate(R.layout.progress_bar_footter, null);
 
 	@Override
 	protected void onPreExecute() {
 	  super.onPreExecute();
 	  isLoading = true;
-	  progress = ProgressDialog.show(getActivity(),
+	  
+		listView.addFooterView(view);
+/*	  progress = ProgressDialog.show(getActivity(),
 	      null, getString(R.string.progress_dialog), true,
-	      false);
+	      false);*/
 	}
 
 	@Override
@@ -115,7 +118,8 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	protected void onPostExecute(DataResponceEntity result) {
 	  super.onPostExecute(result);
 	  processGetContentResult(result);
-	  progress.dismiss();
+	 /* progress.dismiss();*/
+	  listView.removeFooterView(view);
 	  isLoading = false;
 
 	}
@@ -123,21 +127,29 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	
 	
 }
-	 private void processGetContentResult(DataResponceEntity result) {
+	 private void processGetContentResult(final DataResponceEntity result) {
 			// TODO Add if null handling, or create ServerDataResponse entity 
 		if ((result != null) && ( result != null)){ 
 //		 articlesArray.addAll(result.getArticlesArray());
 			switch (result.getResponceCode()) {
 			case DataProvider.DATA_RESPONCE_OK:
-				articlesArray = result.getArticlesArray();
+//				articlesArray = result.getArticlesArray();
 				if(adapter != null){
-					/*adapter.notifyDataSetChanged();
-					listView.invalidate();
+					
+					
+					getActivity().runOnUiThread(new Runnable() {
+					    public void run() {
+					    	
+					    	adapter.addAllCompatible(result.getArticlesArray());
+					    	adapter.notifyDataSetChanged();
+					    }
+					});
+					/*listView.invalidate();
 					listView.setAdapter(adapter);
 					listView.refreshDrawableState();*/
-					adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
+					/*adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
 					listView.setAdapter(adapter);
-					listView.setOnItemClickListener(listViewItemOnClickListener);
+					listView.setOnItemClickListener(listViewItemOnClickListener);*/
 					
 						Log.d(LOG_TAG, "adapter.notifyDataSetChanged();");
 						Log.d(LOG_TAG, "articlesArray.size()" + articlesArray.size());
@@ -191,4 +203,6 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
          ft.replace(R.id.rootLayout, newFragment, getTag());
          ft.commit();
 	}
+	
+		
 }

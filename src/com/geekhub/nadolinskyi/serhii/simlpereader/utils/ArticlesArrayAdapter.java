@@ -1,5 +1,6 @@
 package com.geekhub.nadolinskyi.serhii.simlpereader.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.geekhub.nadolinskyi.serhii.simlpereader.R;
@@ -35,6 +36,18 @@ public class ArticlesArrayAdapter extends ArrayAdapter<Article> {
 		
 	}
 
+	
+	public void addAllCompatible(ArrayList<Article> items) {
+		// TODO Auto-generated method stub
+		if(CommonUtils.IsHoneycombOrLater()){
+			super.addAll(items);
+		}else{
+			for (Article article:items){
+				super.add(article);
+			}
+		}
+		
+	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {

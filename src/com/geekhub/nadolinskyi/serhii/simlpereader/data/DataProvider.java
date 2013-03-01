@@ -69,7 +69,7 @@ public class DataProvider {
 			//TODO get data from db/net
 			return null;
 		}else{
-			if((articlesArray.size() == 0)||(fetchNewArticles)) {
+			if((!hasLoadedArticles())||(fetchNewArticles)) {
 				return getContentFromURL();
 			}else{
 				if (articlesArray.size()>0){
@@ -99,7 +99,6 @@ public class DataProvider {
 				
 				return responce.setResponceCode(SERVER_RESPONCE_FAILED)
 						.setResponceMessage(con.getResponseMessage())
-						.setArticlesArray(articlesArray)
 						.decCurrentPage();
 			}
 			
@@ -109,21 +108,18 @@ public class DataProvider {
 			e.printStackTrace();
 			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_MALFORMED_URL)
 					.setResponceMessage(e.getMessage())
-					.setArticlesArray(articlesArray)
 					.decCurrentPage();
 		} catch (IOException e) {
 			Log.d(LOG_TAG, e.getMessage());
 			e.printStackTrace();
 			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_IO)
 					.setResponceMessage(e.getMessage())
-					.setArticlesArray(articlesArray)
 					.decCurrentPage();
 		} catch (Exception e) {
 			Log.d(LOG_TAG, e.getMessage());
 			e.printStackTrace();
 			return responce.setResponceCode(SERVER_RESPONCE_EXCEPTION_UNKNOWN)
 					.setResponceMessage(e.getMessage())
-					.setArticlesArray(articlesArray)
 					.decCurrentPage();
 		}
 		
@@ -197,7 +193,6 @@ public class DataProvider {
 		if ((feedString == null)||(feedString.equals(""))){
 			Log.d(LOG_TAG, "feedString is null");
 			return responce.setResponceCode(SERVER_RESPONCE_NO_FEED)
-					.setArticlesArray(articlesArray)
 					.decCurrentPage();
 		}
 		Log.d(LOG_TAG, "Started to parse ");
@@ -211,6 +206,7 @@ public class DataProvider {
 //		 domFactory.setNamespaceAware(true);
 		 
 			try {
+				ArrayList<Article> articlesArrayCurrentPage = new ArrayList<Article>();
 				DocumentBuilder builder = domFactory.newDocumentBuilder();
 				 Document doc = builder.parse(stream);
 			     NodeList channelNodeList = doc.getElementsByTagName(Constants.XML_CHANNEL);
@@ -220,8 +216,7 @@ public class DataProvider {
 			     NodeList item_nodeList = channelElement.getElementsByTagName(Constants.XML_ITEM);
 			     if (item_nodeList.getLength() == 0){
 			    	 responce.setHasNoNextPage();
-			    	 responce.setResponceCode(DATA_RESPONCE_FEED_END)
-						.setArticlesArray(articlesArray);
+			    	 responce.setResponceCode(DATA_RESPONCE_FEED_END);
 			     }
 			     
 			     //Getting all "item elements"
@@ -249,12 +244,13 @@ public class DataProvider {
 			    		  Node categoryNode = categoriesNodesList.item(categories_index);
 			    		  article.addCategory(categoryNode.getTextContent());
 			    	  }
-			    	  articlesArray.add(article);
+			    	  articlesArrayCurrentPage.add(article);
 //			    	  Log.d(LOG_TAG, "Got " + article.getCategories().size() +" elements of " + Constants.XML_CATEGORY);
 			    	  }
 			     Log.d(LOG_TAG, "Parce finished ");
+			     articlesArray.addAll(articlesArrayCurrentPage);
 			     return responce.setResponceCode(DATA_RESPONCE_OK)
-							.setArticlesArray(articlesArray);
+							.setArticlesArray(articlesArrayCurrentPage);
 							
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
