@@ -33,11 +33,12 @@ public class ListViewFragment extends Fragment {
 	private ArticlesArrayAdapter adapter;
 	private static ArrayList<Article> articlesArray;
 	private boolean isLoading = false;
-
+	private ContentFragment contentFragment;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_list_view, null);
+		
 	}
 	
 	@Override
@@ -60,8 +61,28 @@ public class ListViewFragment extends Fragment {
 		adapter = new ArticlesArrayAdapter(getActivity(), articlesArray);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(listViewItemOnClickListener);
+		
+		 if (savedInstanceState != null) {
+			if (getActivity().getSupportFragmentManager().findFragmentByTag(Constants.CONTENT_FRAGMENT_TAG) != null){
+				contentFragment =  (ContentFragment)  getActivity().getSupportFragmentManager().findFragmentByTag(Constants.CONTENT_FRAGMENT_TAG);
+			}
+			 	
+		    } else {
+		    	/*contentFragment = new ContentFragment();
+		        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.rootLayout, contentFragment, Constants.LIST_VIEW_FRAGMENT_TAG).commit(); 
+		    */
+		    	}
+		 
 	}
-	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		if(contentFragment != null){
+		getActivity().getSupportFragmentManager()
+        .putFragment(outState, Constants.LIST_VIEW_FRAGMENT_TAG, contentFragment);
+		}
+	}
 private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollListener() {
 		
 		@Override
@@ -180,14 +201,15 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 			
 		}
 	};
+	private ContentFragment newFragment;
 	
 	private void createNewContentFragment(Article article){
 		
-		ContentFragment newFragment = new ContentFragment();
+		contentFragment = new ContentFragment();
 		Bundle args = new Bundle();
 		args.putString(Constants.BK_CONTENT, article.getContent());
-		newFragment.setArguments(args);
-		createNewFragment(newFragment);
+		contentFragment.setArguments(args);
+		createNewFragment(contentFragment);
 		
 	}
 	
@@ -198,9 +220,9 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 	}
 	
 	private void createNewFragment(Fragment newFragment){
-		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+		 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 		 ft.addToBackStack(getTag());
-         ft.replace(R.id.rootLayout, newFragment, getTag());
+         ft.replace(R.id.rootLayout, newFragment, Constants.CONTENT_FRAGMENT_TAG);
          ft.commit();
 	}
 	

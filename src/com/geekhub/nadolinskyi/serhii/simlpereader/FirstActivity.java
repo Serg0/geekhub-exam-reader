@@ -1,5 +1,7 @@
 package com.geekhub.nadolinskyi.serhii.simlpereader;
 
+import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -7,7 +9,7 @@ import android.view.Menu;
 
 public class FirstActivity extends FragmentActivity {
 
-	private static final String LIST_VIEW_FRAGMENT_TAG = "com.geekhub.nadolinskyi.serhii.simlpereader.ListViewFragment";
+	
 	ListViewFragment fragment;
 	private FragmentTransaction ft;
 	
@@ -18,10 +20,10 @@ public class FirstActivity extends FragmentActivity {
 		
 		
 	    if (savedInstanceState != null) {
-	        fragment = (ListViewFragment) getSupportFragmentManager().findFragmentByTag(LIST_VIEW_FRAGMENT_TAG);
+	        fragment = (ListViewFragment) getSupportFragmentManager().findFragmentByTag(Constants.LIST_VIEW_FRAGMENT_TAG);
 	    } else {
 	        fragment = new ListViewFragment();
-	        getSupportFragmentManager().beginTransaction().add(R.id.rootLayout, fragment, LIST_VIEW_FRAGMENT_TAG).commit(); 
+	        getSupportFragmentManager().beginTransaction().add(R.id.rootLayout, fragment, Constants.LIST_VIEW_FRAGMENT_TAG).commit(); 
 	    }
 /*		if (fragment == null){		
 		fragment = new ListViewFragment();
@@ -40,7 +42,7 @@ public class FirstActivity extends FragmentActivity {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 		getSupportFragmentManager()
-        .putFragment(outState, LIST_VIEW_FRAGMENT_TAG, fragment);
+        .putFragment(outState, Constants.LIST_VIEW_FRAGMENT_TAG, fragment);
 	}
 
 	@Override

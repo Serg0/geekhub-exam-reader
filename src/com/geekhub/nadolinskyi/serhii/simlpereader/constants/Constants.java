@@ -43,7 +43,8 @@ public class Constants {
 	public static final String BK_CONTENT						="com.geekhub.nadolinskyi.serhii.simlpereader.bk.content";
 	
 	
-	
+	public static final String LIST_VIEW_FRAGMENT_TAG = "com.geekhub.nadolinskyi.serhii.simlpereader.ListViewFragment";
+	public static final String CONTENT_FRAGMENT_TAG = "com.geekhub.nadolinskyi.serhii.simlpereader.ContentFragment";
 	
 	
 }
