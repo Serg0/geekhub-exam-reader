@@ -1,13 +1,16 @@
 package com.geekhub.nadolinskyi.serhii.simlpereader;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
 
-public class FirstActivity extends FragmentActivity {
+public class FirstActivity extends SherlockFragmentActivity {
 
 	
 	ListViewFragment fragment;
@@ -45,10 +48,20 @@ public class FirstActivity extends FragmentActivity {
         .putFragment(outState, Constants.LIST_VIEW_FRAGMENT_TAG, fragment);
 	}
 
+/*	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		// TODO Auto-generated method stub
+		return super.onCreateOptionsMenu(menu);
+	}*/
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_first, menu);
+
+	    MenuInflater supportMenuInflater = getSupportMenuInflater();
+//	  supportMenuInflater.inflate(R.menu.activity_first, menu);
+	     MenuItem item = menu.findItem(R.id.menu_settings);
+//	     item.setIcon(R.drawable.button_custom_black);
+		getSupportMenuInflater().inflate(R.menu.activity_first, menu);
 		return true;
 	}
 

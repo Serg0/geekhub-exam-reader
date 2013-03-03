@@ -26,6 +26,7 @@ import com.geekhub.nadolinskyi.serhii.simlpereader.constants.Constants;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.Article;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.ArticlesArray;
 import com.geekhub.nadolinskyi.serhii.simlpereader.models.DataResponceEntity;
+import com.geekhub.nadolinskyi.serhii.simlpereader.utils.CommonUtils;
 
 
 
@@ -227,16 +228,20 @@ public class DataProvider {
 			    	 
 			    	 Node node = item_nodeList.item(index);
 			    	  Element element = (Element) node;
+			    	String content = getNodeValue(element, Constants.XML_CONTENT);
+			    	String firstImage = CommonUtils.extractFirstImage(content);
 			    	
+			    	Log.d(LOG_TAG, "Extracted pic "+firstImage);
 			    	  article.setTitle(getNodeValue(element, Constants.XML_TITLE))
 			    	  		 .setLink(getNodeValue(element, Constants.XML_LINK))
 			    	  		 .setComments(getNodeValue(element, Constants.XML_COMMENTS))
 			    	  		 .setPubDate(getNodeValue(element, Constants.XML_PUB_DATE))
 			    	  		 .setCreator(getNodeValue(element, Constants.XML_CREATOR))
 			    	  		 .setDescription(getNodeValue(element, Constants.XML_DESCTRIPTION))
-			    	  		 .setContent(getNodeValue(element, Constants.XML_CONTENT))
+			    	  		 .setContent(content)
 			    	  		 .setComments_rss(getNodeValue(element, Constants.XML_COMMENTS_RSS))
-			    	  		 .setSplash_comments(getNodeValue(element, Constants.XML_COMMENTS_SPLASH));
+			    	  		 .setSplash_comments(getNodeValue(element, Constants.XML_COMMENTS_SPLASH))
+			    	  		 .setPic(firstImage);
 			    	  Log.d(LOG_TAG, "TITLE: " + article.getTitle());
 			    	  NodeList categoriesNodesList = element.getElementsByTagName(Constants.XML_CATEGORY);
 			    	  for (int categories_index = 0; categories_index < categoriesNodesList

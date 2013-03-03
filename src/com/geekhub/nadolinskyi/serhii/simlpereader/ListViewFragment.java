@@ -186,7 +186,7 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 			
 		 
 		 }else{
-		Toast.makeText(getActivity(), "Invalid server responce", Toast.LENGTH_LONG).show();	 
+//		Toast.makeText(getActivity(), "Invalid server responce", Toast.LENGTH_LONG).show();	 
 		 }
 		 
 		}

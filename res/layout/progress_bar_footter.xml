@@ -7,10 +7,10 @@
 
     <ProgressBar
         android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleSmall"
-        android:indeterminate="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:indeterminate="true" />
 
     <TextView
         android:id="@+id/textView1"

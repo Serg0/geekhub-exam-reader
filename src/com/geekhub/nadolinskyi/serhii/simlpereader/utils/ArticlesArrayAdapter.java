@@ -66,6 +66,12 @@ public class ArticlesArrayAdapter extends ArrayAdapter<Article> {
 		ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
 		
 		title.setText(article.getTitle());
+		String subTitleText = "";
+		
+		subTitleText = CommonUtils.formatDateToRelativeFormat(article.getPubDate()) +
+				" by "+ article.getCreator();
+		
+		subTitle.setText(subTitleText);
 //		subTitle.setText(article.getSubtitle());
 		
 		return convertView /*super.getView(position, convertView, parent)*/;

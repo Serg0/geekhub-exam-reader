@@ -13,7 +13,8 @@ public class Article {
 		description,
 		content,
 		comments_rss,
-		splash_comments;
+		splash_comments,
+		pic;
 		
 	ArrayList<String> categories;
 	
@@ -27,6 +28,7 @@ public class Article {
 		content = "";
 		comments_rss = "";
 		splash_comments = "";
+		pic = "";
 		categories = new ArrayList<String>();
 		
 	}
@@ -123,6 +125,15 @@ public class Article {
 	
 	public Article addCategory(String category){
 		this.categories.add(category);
+		return this;
+	}
+
+	public String getPic() {
+		return pic;
+	}
+
+	public Article setPic(String pic) {
+		this.pic = pic;
 		return this;
 	}
 	

@@ -32,6 +32,8 @@ public class ContentFragment extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		setHasOptionsMenu(true);
 //		setRetainInstance(true);
 /*	 for future FT container id
  * 		((ViewGroup)getView().getParent()).getId();
@@ -76,4 +78,6 @@ public class ContentFragment extends Fragment{
 		super.onSaveInstanceState(outState);
 		webView.saveState(outState);
 	}
+	
+	
 }

@@ -8,18 +8,19 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/subTitle"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/arrow" />
+        android:src="@drawable/navigation_next_item" />
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/ng_ico"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/ng_ico" />
 
     <TextView
         android:id="@+id/title"
@@ -28,10 +29,11 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="4dp"
         android:layout_toLeftOf="@+id/imageView1"
-        android:layout_toRightOf="@+id/icon"
+        android:layout_toRightOf="@+id/ng_ico"
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -42,9 +44,9 @@
         android:layout_alignLeft="@+id/title"
         android:layout_alignRight="@+id/title"
         android:layout_below="@+id/title"
-        android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 

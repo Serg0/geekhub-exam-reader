@@ -13,9 +13,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ng_ico"
         android:label="@string/app_name"
-        android:theme="@style/Theme.green_style" >
+        android:theme="@style/Holo.Theme.Light.DarkActionBar" >
         <activity
             android:name="com.geekhub.nadolinskyi.serhii.simlpereader.FirstActivity"
             android:label="@string/app_name" 
