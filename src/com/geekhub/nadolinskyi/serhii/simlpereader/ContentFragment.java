@@ -37,7 +37,10 @@ public class ContentFragment extends Fragment{
  * 		((ViewGroup)getView().getParent()).getId();
  */
 		webView = (WebView) getView().findViewById(R.id.webView);
-		
+
+		if (savedInstanceState != null){
+					webView.restoreState(savedInstanceState); 
+		}else{
 		Bundle    inputBundle = getArguments();
 	    if(inputBundle!=null)
 	    {
@@ -64,6 +67,13 @@ public class ContentFragment extends Fragment{
 	    	
 	    }
 		
-		
+		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		webView.saveState(outState);
 	}
 }

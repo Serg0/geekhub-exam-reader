@@ -156,15 +156,15 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 			case DataProvider.DATA_RESPONCE_OK:
 //				articlesArray = result.getArticlesArray();
 				if(adapter != null){
-					
-					
+					adapter.addAllCompatible(result.getArticlesArray());
+					if(getActivity()!= null){
 					getActivity().runOnUiThread(new Runnable() {
 					    public void run() {
-					    	
-					    	adapter.addAllCompatible(result.getArticlesArray());
 					    	adapter.notifyDataSetChanged();
 					    }
 					});
+					
+				}
 					/*listView.invalidate();
 					listView.setAdapter(adapter);
 					listView.refreshDrawableState();*/
@@ -196,9 +196,10 @@ private	AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollLi
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int position,
 				long id) {
+			if(position<articlesArray.size()){
 			Article article = articlesArray.get(position);
 			createNewContentFragment(article);
-			
+			}
 		}
 	};
 	private ContentFragment newFragment;
